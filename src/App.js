@@ -17,10 +17,24 @@ const App = () => {
     )
   }, [])
 
+  useEffect(() => {
+    const loggedInUser = window.localStorage.getItem('loggedInUser')
+    if (loggedInUser) {
+      setUser(loggedInUser)
+    }
+  }, [])
+
   const handleLogin = async event => {
     event.preventDefault()
-    const user = await loginService.login(username, password)
-    setUser(user)
+    try {
+      const user = await loginService.login(username, password)
+      window.localStorage.setItem('loggedInUser', JSON.stringify(user))
+      setUser(user)
+      setUsername('')
+      setPassword('')
+    } catch{
+      console.error("Wrong credentials")
+    }
   }
 
   if (user === null) {
