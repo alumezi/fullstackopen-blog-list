@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
-import blogService from './services/blogs'
-import loginService from './services/login'
+import Create from './components/Create'
+import { getAll, create, setToken } from './services/blogs'
+import { login } from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
+    getAll().then(blogs =>
       setBlogs(blogs)
     )
   }, [])
@@ -20,14 +23,16 @@ const App = () => {
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem('loggedInUser')
     if (loggedInUser) {
-      setUser(JSON.parse(loggedInUser))
+      const user = JSON.parse(loggedInUser)
+      setUser(user)
+      setToken(user.token)
     }
   }, [])
 
   const handleLogin = async event => {
     event.preventDefault()
     try {
-      const user = await loginService.login(username, password)
+      const user = await login(username, password)
       window.localStorage.setItem('loggedInUser', JSON.stringify(user))
       setUser(user)
       setUsername('')
@@ -43,6 +48,15 @@ const App = () => {
     setUser(null)
   }
 
+  const handleCreate = async event => {
+    event.preventDefault()
+    const newBlog = await create({ title, author, url })
+    setBlogs(blogs.concat(newBlog))
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
+
   if (user === null) {
     return <Login handleLogin={handleLogin} username={username} password={password} setUsername={setUsername} setPassword={setPassword} />
   }
@@ -54,6 +68,7 @@ const App = () => {
         <span>{user.name} logged in</span>
         <button onClick={event => handleLogout(event)}>Logout</button>
       </div>
+      <Create handleCreate={handleCreate} title={title} author={author} url={url} setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl} />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
