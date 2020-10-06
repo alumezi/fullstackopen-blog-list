@@ -4,6 +4,7 @@ import Login from './components/Login'
 import Create from './components/Create'
 import { getAll, create, setToken } from './services/blogs'
 import { login } from './services/login'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +14,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notification, setNotification] = useState({ message: '', type: '' })
 
   useEffect(() => {
     getAll().then(blogs =>
@@ -38,7 +40,8 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch{
-      console.error("Wrong credentials")
+      setNotification({ message: `Wrong credentials`, type: 'error' })
+      setTimeout(() => setNotification({ message: '', type: '' }), 5000)
     }
   }
 
@@ -55,15 +58,21 @@ const App = () => {
     setTitle('')
     setAuthor('')
     setUrl('')
+    setNotification({ message: `A new blog ${title} by ${author} added`, type: 'notification' })
+    setTimeout(() => setNotification({ message: '', type: '' }), 5000)
   }
 
   if (user === null) {
-    return <Login handleLogin={handleLogin} username={username} password={password} setUsername={setUsername} setPassword={setPassword} />
+    return <div>
+      <Notification message={notification.message} type={notification.type} />
+      <Login handleLogin={handleLogin} username={username} password={password} setUsername={setUsername} setPassword={setPassword} />
+    </div>
   }
 
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={notification.message} type={notification.type} />
       <div>
         <span>{user.name} logged in</span>
         <button onClick={event => handleLogout(event)}>Logout</button>
