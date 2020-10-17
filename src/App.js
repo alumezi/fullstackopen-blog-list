@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import Create from './components/Create'
-import { getAll, setToken, create } from './services/blogs'
+import { getAll, setToken, create, update } from './services/blogs'
 import { login } from './services/login'
 import Notification from './components/Notification'
 import Toggable from './components/Toggable'
@@ -58,6 +58,16 @@ const App = () => {
     setTimeout(() => setNotification({ message: '', type: '' }), 5000)
   }
 
+  const handleLike = async id => {
+    const blogsCopy = [...blogs]
+    const index = blogsCopy.findIndex(element => element.id === id)
+    const newBlog = blogsCopy[index];
+    newBlog.likes++;
+    const updatedBlog = await update(newBlog)
+    blogsCopy[index] = updatedBlog
+    setBlogs(blogsCopy)
+  }
+
   if (user === null) {
     return <div>
       <Notification message={notification.message} type={notification.type} />
@@ -77,7 +87,7 @@ const App = () => {
         <Create createBlog={createBlog} />
       </Toggable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addLike={handleLike} />
       )}
     </div>
   )
