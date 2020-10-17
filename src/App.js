@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import Create from './components/Create'
-import { getAll, setToken } from './services/blogs'
+import { getAll, setToken, create } from './services/blogs'
 import { login } from './services/login'
 import Notification from './components/Notification'
 import Toggable from './components/Toggable'
@@ -50,7 +50,8 @@ const App = () => {
     setUser(null)
   }
 
-  const onCreate = newBlog => {
+  const createBlog = async Blog => {
+    const newBlog = await create(Blog)
     setBlogFormVisibility(false)
     setBlogs(blogs.concat(newBlog))
     setNotification({ message: `A new blog ${newBlog.title} by ${newBlog.author} added`, type: 'notification' })
@@ -73,7 +74,7 @@ const App = () => {
         <button onClick={event => handleLogout(event)}>Logout</button>
       </div>
       <Toggable buttonLabel="new note" visible={blogFormVisibility} toggle={setBlogFormVisibility}>
-        <Create onCreate={onCreate} />
+        <Create createBlog={createBlog} />
       </Toggable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />

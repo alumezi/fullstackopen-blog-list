@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { create } from '../services/blogs'
 
-const Create = ({ onCreate }) => {
+const Create = ({ createBlog }) => {
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [url, setUrl] = useState('')
@@ -9,11 +8,10 @@ const Create = ({ onCreate }) => {
 
     const handleCreate = async event => {
         event.preventDefault()
-        const newBlog = await create({ title, author, url })
+        await createBlog({ title, author, url })
         setTitle('')
         setAuthor('')
         setUrl('')
-        onCreate(newBlog)
     }
 
     return <form onSubmit={handleCreate}>
