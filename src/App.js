@@ -5,6 +5,7 @@ import Create from './components/Create'
 import { getAll, create, setToken } from './services/blogs'
 import { login } from './services/login'
 import Notification from './components/Notification'
+import Toggable from './components/Toggable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,6 +16,7 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [notification, setNotification] = useState({ message: '', type: '' })
+  const [blogFormVisibility, setBlogFormVisibility] = useState(false);
 
   useEffect(() => {
     getAll().then(blogs =>
@@ -54,6 +56,7 @@ const App = () => {
   const handleCreate = async event => {
     event.preventDefault()
     const newBlog = await create({ title, author, url })
+    setBlogFormVisibility(false)
     setBlogs(blogs.concat(newBlog))
     setTitle('')
     setAuthor('')
@@ -77,7 +80,9 @@ const App = () => {
         <span>{user.name} logged in</span>
         <button onClick={event => handleLogout(event)}>Logout</button>
       </div>
-      <Create handleCreate={handleCreate} title={title} author={author} url={url} setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl} />
+      <Toggable buttonLabel="new note" visible={blogFormVisibility} toggle={setBlogFormVisibility}>
+        <Create handleCreate={handleCreate} title={title} author={author} url={url} setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl} />
+      </Toggable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
