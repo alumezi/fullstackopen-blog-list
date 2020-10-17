@@ -17,7 +17,7 @@ const App = () => {
 
   useEffect(() => {
     getAll().then(blogs =>
-      setBlogs(blogs)
+      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
     )
   }, [])
 
@@ -65,7 +65,7 @@ const App = () => {
     newBlog.likes++;
     const updatedBlog = await update(newBlog)
     blogsCopy[index] = updatedBlog
-    setBlogs(blogsCopy)
+    setBlogs(blogsCopy.sort((a, b) => b.likes - a.likes))
   }
 
   if (user === null) {
