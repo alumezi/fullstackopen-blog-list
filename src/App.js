@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import Create from './components/Create'
-import { getAll, create, setToken } from './services/blogs'
+import { getAll, setToken } from './services/blogs'
 import { login } from './services/login'
 import Notification from './components/Notification'
 import Toggable from './components/Toggable'
@@ -12,9 +12,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notification, setNotification] = useState({ message: '', type: '' })
   const [blogFormVisibility, setBlogFormVisibility] = useState(false);
 
@@ -53,15 +50,10 @@ const App = () => {
     setUser(null)
   }
 
-  const handleCreate = async event => {
-    event.preventDefault()
-    const newBlog = await create({ title, author, url })
+  const onCreate = newBlog => {
     setBlogFormVisibility(false)
     setBlogs(blogs.concat(newBlog))
-    setTitle('')
-    setAuthor('')
-    setUrl('')
-    setNotification({ message: `A new blog ${title} by ${author} added`, type: 'notification' })
+    setNotification({ message: `A new blog ${newBlog.title} by ${newBlog.author} added`, type: 'notification' })
     setTimeout(() => setNotification({ message: '', type: '' }), 5000)
   }
 
@@ -81,7 +73,7 @@ const App = () => {
         <button onClick={event => handleLogout(event)}>Logout</button>
       </div>
       <Toggable buttonLabel="new note" visible={blogFormVisibility} toggle={setBlogFormVisibility}>
-        <Create handleCreate={handleCreate} title={title} author={author} url={url} setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl} />
+        <Create onCreate={onCreate} />
       </Toggable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />

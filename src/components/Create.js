@@ -1,6 +1,22 @@
-import React from 'react'
-const Create = ({ handleCreate, title, author, url, setTitle, setAuthor, setUrl }) => (
-    <form onSubmit={handleCreate}>
+import React, { useState } from 'react'
+import { create } from '../services/blogs'
+
+const Create = ({ onCreate }) => {
+    const [title, setTitle] = useState('')
+    const [author, setAuthor] = useState('')
+    const [url, setUrl] = useState('')
+
+
+    const handleCreate = async event => {
+        event.preventDefault()
+        const newBlog = await create({ title, author, url })
+        setTitle('')
+        setAuthor('')
+        setUrl('')
+        onCreate(newBlog)
+    }
+
+    return <form onSubmit={handleCreate}>
         <h2>create new</h2>
         <div>
             <label htmlFor="title">title</label>
@@ -16,6 +32,6 @@ const Create = ({ handleCreate, title, author, url, setTitle, setAuthor, setUrl 
         </div>
         <button type="submit">create</button>
     </form>
-)
+}
 
 export default Create
