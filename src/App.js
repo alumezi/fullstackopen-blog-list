@@ -13,7 +13,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState({ message: '', type: '' })
-  const [blogFormVisibility, setBlogFormVisibility] = useState(false);
+  const [blogFormVisibility, setBlogFormVisibility] = useState(false)
 
   useEffect(() => {
     getAll().then(blogs =>
@@ -38,8 +38,8 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch{
-      setNotification({ message: `Wrong credentials`, type: 'error' })
+    } catch(error){
+      setNotification({ message: error.message, type: 'error' })
       setTimeout(() => setNotification({ message: '', type: '' }), 5000)
     }
   }
@@ -61,8 +61,8 @@ const App = () => {
   const handleLike = async id => {
     const blogsCopy = [...blogs]
     const index = blogsCopy.findIndex(element => element.id === id)
-    const newBlog = blogsCopy[index];
-    newBlog.likes++;
+    const newBlog = blogsCopy[index]
+    newBlog.likes++
     const updatedBlog = await update(newBlog)
     blogsCopy[index] = updatedBlog
     setBlogs(blogsCopy.sort((a, b) => b.likes - a.likes))
