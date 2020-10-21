@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
 import Create from './components/Create'
-import { getAll, setToken, create, update } from './services/blogs'
+import { getAll, setToken, create, update, removeBlog } from './services/blogs'
 import { login } from './services/login'
 import Notification from './components/Notification'
 import Toggable from './components/Toggable'
@@ -68,6 +68,20 @@ const App = () => {
     setBlogs(blogsCopy.sort((a, b) => b.likes - a.likes))
   }
 
+  const handleDelete = async blog => {
+    if(window.confirm(`Are you sure you want to delete ${blog.title} by ${blog.author}`)){
+      try{
+        await removeBlog(blog.id)
+        setBlogs(blogs.filter(element => element.id !== blog.id))
+        setNotification({ message: `Deleted ${blog.title} by ${blog.author}`, type: 'notification' })
+        setTimeout(() => setNotification({ message: '', type: '' }), 5000)
+      } catch(err){
+        setNotification({ message: err.message, type: 'error' })
+        setTimeout(() => setNotification({ message: '', type: '' }), 5000)
+      }
+    }
+  }
+
   if (user === null) {
     return <div>
       <Notification message={notification.message} type={notification.type} />
@@ -87,7 +101,7 @@ const App = () => {
         <Create createBlog={createBlog} />
       </Toggable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} addLike={handleLike} />
+        <Blog key={blog.id} blog={blog} addLike={handleLike} removeBlog={handleDelete} userID={user.id} />
       )}
     </div>
   )
