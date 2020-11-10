@@ -17,7 +17,7 @@ const Blog = ({ blog, addLike, removeBlog, userID }) => {
 
   return <div style={blogStyle}>
     {blog.title} {blog.author} <button onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide' : 'view'}</button>
-    <div style={{ display: showDetails ? '' : 'none' }}>
+    <div className="detail-container" style={{ display: showDetails ? '' : 'none' }}>
       <div>{blog.url}</div>
       <div>{blog.likes} <button onClick={() => addLike(blog.id)}>like</button></div>
       <div>{blog.author}</div>
