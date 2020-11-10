@@ -19,7 +19,7 @@ const Blog = ({ blog, addLike, removeBlog, userID }) => {
     {blog.title} {blog.author} <button data-testid="view-btn" onClick={() => setShowDetails(!showDetails)}>{showDetails ? 'hide' : 'view'}</button>
     <div className="detail-container" style={{ display: showDetails ? '' : 'none' }}>
       <div>{blog.url}</div>
-      <div>{blog.likes} <button onClick={() => addLike(blog.id)}>like</button></div>
+      <div>{blog.likes} <button data-testid="like-btn" onClick={() => addLike(blog.id)}>like</button></div>
       <div>{blog.author}</div>
       <button style={deleteButtonStyle} onClick={() => removeBlog(blog)}>Remove</button>
     </div>

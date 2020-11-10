@@ -5,9 +5,12 @@ import Blog from './Blog'
 
 
 describe('blog test', () => {
-  let testBlog
+  let component
+  let addLikeFunction
+  let removeBlogFunction
+
   beforeEach(() => {
-    testBlog = {
+    const testBlog = {
       id: '123',
       title: 'title',
       author: 'author',
@@ -15,14 +18,16 @@ describe('blog test', () => {
       url: '/url',
       user: { id: '1231' }
     }
+    addLikeFunction = jest.fn()
+    removeBlogFunction = jest.fn()
+
+    component = render(<Blog blog={testBlog} addLike={addLikeFunction} removeBlog={removeBlogFunction} userID="1231" />)
   })
 
   test('renders the title & author but not details', () => {
-    const component = render(<Blog blog={testBlog} addLike={() => { }} removeBlog={() => { }} userID="1231" />)
-
-    let title = component.findByText('title')
-    let author = component.findByText('author')
-    let container = component.container.querySelector('.detail-container')
+    const title = component.findByText('title')
+    const author = component.findByText('author')
+    const container = component.container.querySelector('.detail-container')
 
     expect(title).toBeDefined()
     expect(author).toBeDefined()
@@ -30,13 +35,18 @@ describe('blog test', () => {
   })
 
   test('show details after clicking view', () => {
-    const component = render(<Blog blog={testBlog} addLike={() => { }} removeBlog={() => { }} userID="1231" />)
-    let viewDetailsButton = component.getByTestId('view-btn')
-    let container = component.container.querySelector('.detail-container')
+    const viewDetailsButton = component.getByTestId('view-btn')
+    const container = component.container.querySelector('.detail-container')
     expect(container).toHaveStyle('display: none;')
     fireEvent.click(viewDetailsButton)
     expect(container).not.toHaveStyle('display: none;')
   })
 
+  test('2 likes are 2 likes', () => {
+    const likeButton = component.getByTestId('like-btn')
+    fireEvent.click(likeButton)
+    fireEvent.click(likeButton)
+    expect(addLikeFunction.mock.calls.length).toBe(2)
+  })
 
 })
