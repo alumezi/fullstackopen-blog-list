@@ -1,7 +1,7 @@
 describe('Blog app', function () {
   beforeEach(function () {
     cy.request('POST', 'http://localhost:3001/api/test/reset')
-    cy.request('POST', 'http://localhost:3001/api/users', { username : 'alumezi', password: 'sekret', name: 'Arbnor' })
+    cy.request('POST', 'http://localhost:3001/api/users', { username: 'alumezi', password: 'sekret', name: 'Arbnor' })
     cy.visit('http://localhost:3000')
   })
 
@@ -11,7 +11,7 @@ describe('Blog app', function () {
 
   describe('Login', function () {
     it('succeeds with correct credentials', function () {
-      cy.login({ username : 'alumezi', password: 'sekret' })
+      cy.login({ username: 'alumezi', password: 'sekret' })
       cy.visit('http://localhost:3000')
       cy.contains('Arbnor logged in')
     })
@@ -29,13 +29,13 @@ describe('Blog app', function () {
     })
   })
 
-  describe.only('When logged in', function() {
-    beforeEach(function() {
-      cy.login({ username : 'alumezi', password: 'sekret' })
+  describe.only('When logged in', function () {
+    beforeEach(function () {
+      cy.login({ username: 'alumezi', password: 'sekret' })
       cy.visit('http://localhost:3000')
     })
 
-    it('A blog can be created', function() {
+    it('A blog can be created', function () {
       cy.contains('new note').click()
       cy.get('.blog-create-form')
       cy.get('#title').type('test title from cypress')
@@ -60,11 +60,11 @@ describe('Blog app', function () {
         .and('contain', 'hide')
         .and('contain', 'http://localhost:3000/or/whatever')
         .and('contain', 'cypress')
-      cy.get('.blog-likes').should('contain', 0)
+      cy.get('.blog-likes-container').should('contain', 0)
       cy.get('[data-testid=like-btn]').click()
-      cy.get('.blog-likes').should('contain', 1)
+      cy.get('.blog-likes-container').should('contain', 1)
       cy.get('[data-testid=like-btn]').click()
-      cy.get('.blog-likes').should('contain', 2)
+      cy.get('.blog-likes-container').should('contain', 2)
     })
 
     it('remove a blog', function() {
@@ -86,7 +86,21 @@ describe('Blog app', function () {
       cy.get('blog-container').should('not.exist')
     })
 
+    it('sorts blogs', function () {
+      cy.create_blog({ title: 'make sure we have a blog1', author: 'cypress1', url: 'http://localhost:3000/whatever', likes: 22 })
+      cy.create_blog({ title: 'make sure we have a blog2', author: 'cypress2', url: 'http://localhost:3000/atever', likes: 10 })
+      cy.create_blog({ title: 'make sure we have a blog3', author: 'cypress3', url: 'http://localhost:3000/or/wh', likes: 2 })
+      cy.visit('http://localhost:3000')
+      cy.get('[data-testid=view-btn]').click({ multiple: true })
+      cy.get('.blog-likes-container').then(items => {
+        expect([
+          parseInt(items[0].children[0].innerText),
+          parseInt(items[1].children[0].innerText),
+          parseInt(items[2].children[0].innerText)
+        ]).to.have.ordered.members([22, 10, 2]).but.not.have.ordered.members([2, 10, 22])
+      })
 
 
+    })
   })
 })
