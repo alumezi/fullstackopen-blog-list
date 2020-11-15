@@ -31,3 +31,12 @@ Cypress.Commands.add('login', ({ username, password }) => {
       localStorage.setItem('loggedInUser', JSON.stringify(body))
     })
 })
+
+Cypress.Commands.add('create_blog', ({ title, author, url }) => {
+  cy.request({
+    method: 'POST',
+    url: 'http://localhost:3001/api/blogs',
+    body: { title, author, url },
+    auth: { bearer: JSON.parse(localStorage.getItem('loggedInUser')).token }
+  })
+})

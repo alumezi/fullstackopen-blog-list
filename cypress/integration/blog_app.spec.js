@@ -50,11 +50,10 @@ describe('Blog app', function () {
     })
 
     it('can like a blog', function() {
-      cy.contains('new note').click()
-      cy.get('#title').type('make sure we have a blog')
-      cy.get('#author').type('cypress')
-      cy.get('#url').type('http://localhost:3000/or/whatever')
-      cy.get('#blog-create-submit').click()
+      cy.create_blog({ title : 'make sure we have a blog', author: 'cypress', url: 'http://localhost:3000/or/whatever'  })
+        .then(() => {
+          cy.visit('http://localhost:3000')
+        })
       cy.contains('view').click()
       cy.get('.blog-container').should('contain', 'http://localhost:3000/or/whatever')
         .and('contain', 'make sure we have a blog cypress')
@@ -67,5 +66,27 @@ describe('Blog app', function () {
       cy.get('[data-testid=like-btn]').click()
       cy.get('.blog-likes').should('contain', 2)
     })
+
+    it('remove a blog', function() {
+      cy.create_blog({ title : 'make sure we have a blog', author: 'cypress', url: 'http://localhost:3000/or/whatever'  })
+        .then(() => {
+          cy.visit('http://localhost:3000')
+        })
+      cy.contains('view').click()
+      cy.get('.blog-container').should('contain', 'http://localhost:3000/or/whatever')
+        .and('contain', 'make sure we have a blog cypress')
+        .and('contain', 'hide')
+        .and('contain', 'http://localhost:3000/or/whatever')
+        .and('contain', 'cypress')
+      cy.contains('Remove').click()
+      cy.get('.notification-message')
+        .should('contain', 'Deleted make sure we have a blog by cypress')
+        .and('have.css', 'color', 'rgb(0, 128, 0)')
+        .and('have.css', 'border-style', 'solid')
+      cy.get('blog-container').should('not.exist')
+    })
+
+
+
   })
 })
