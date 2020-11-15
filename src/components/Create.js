@@ -14,7 +14,7 @@ const Create = ({ createBlog }) => {
     setUrl('')
   }
 
-  return <form onSubmit={handleCreate}>
+  return <form className="blog-create-form" onSubmit={handleCreate}>
     <h2>create new</h2>
     <div>
       <label htmlFor="title">title</label>
@@ -28,7 +28,7 @@ const Create = ({ createBlog }) => {
       <label htmlFor="url">url</label>
       <input type="url" id="url" value={url} onChange={event => setUrl(event.target.value)} />
     </div>
-    <button type="submit">create</button>
+    <button id="blog-create-submit" type="submit">create</button>
   </form>
 }
 
