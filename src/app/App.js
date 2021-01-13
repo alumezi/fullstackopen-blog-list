@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
-import Login from './components/Login'
-import Create from './components/Create'
-import { getAll, setToken, create, update, removeBlog } from './services/blogs'
-import { login } from './services/login'
-import Notification from './components/Notification'
-import Toggable from './components/Toggable'
+import {useDispatch} from "react-redux";
+import Blog from '../components/Blog'
+import Login from '../components/Login'
+import Create from '../components/Create'
+import { getAll, setToken, create, update, removeBlog } from '../services/blogs'
+import { login } from '../services/login'
+import Notification from '../components/Notification'
+import Toggable from '../components/Toggable'
+import {setNotification} from "./reducers/notification";
 
 const App = () => {
+  const dispatch = useDispatch();
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState({ message: '', type: '' })
   const [blogFormVisibility, setBlogFormVisibility] = useState(false)
 
   useEffect(() => {
@@ -39,8 +41,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch(error){
-      setNotification({ message: error.message, type: 'error' })
-      setTimeout(() => setNotification({ message: '', type: '' }), 5000)
+      dispatch(setNotification({message: error.message, notificationType: 'error'}))
     }
   }
 
@@ -54,8 +55,7 @@ const App = () => {
     const newBlog = await create(Blog)
     setBlogFormVisibility(false)
     setBlogs(blogs.concat(newBlog))
-    setNotification({ message: `A new blog ${newBlog.title} by ${newBlog.author} added`, type: 'notification' })
-    setTimeout(() => setNotification({ message: '', type: '' }), 5000)
+    dispatch(setNotification({message:`A new blog ${newBlog.title} by ${newBlog.author} added`, notificationType: 'notification'}))
   }
 
   const handleLike = async id => {
@@ -66,6 +66,7 @@ const App = () => {
     const updatedBlog = await update(newBlog)
     blogsCopy[index] = updatedBlog
     setBlogs(blogsCopy.sort((a, b) => b.likes - a.likes))
+    dispatch(setNotification({message:`You liked a blog ${newBlog.title}`, notificationType: 'notification'}))
   }
 
   const handleDelete = async blog => {
@@ -73,18 +74,16 @@ const App = () => {
       try{
         await removeBlog(blog.id)
         setBlogs(blogs.filter(element => element.id !== blog.id))
-        setNotification({ message: `Deleted ${blog.title} by ${blog.author}`, type: 'notification' })
-        setTimeout(() => setNotification({ message: '', type: '' }), 5000)
+        dispatch(setNotification({message: `Deleted ${blog.title} by ${blog.author}`, notificationType: 'notification'}))
       } catch(err){
-        setNotification({ message: err.message, type: 'error' })
-        setTimeout(() => setNotification({ message: '', type: '' }), 5000)
+        dispatch(setNotification({message : err.message, notificationType: 'error'}))
       }
     }
   }
 
   if (user === null) {
     return <div>
-      <Notification message={notification.message} type={notification.type} />
+      <Notification />
       <Login handleLogin={handleLogin} username={username} password={password} setUsername={setUsername} setPassword={setPassword} />
     </div>
   }
@@ -92,7 +91,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={notification.message} type={notification.type} />
+      <Notification/>
       <div>
         <span>{user.name} logged in</span>
         <button onClick={event => handleLogout(event)}>Logout</button>
