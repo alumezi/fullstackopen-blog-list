@@ -1,4 +1,4 @@
-import { create, getAll, update } from "../../services/blogs";
+import { create, getAll, update, removeBlog } from "../../services/blogs";
 
 export const blogs = (state = [], action) => {
     switch(action.type){
@@ -8,6 +8,8 @@ export const blogs = (state = [], action) => {
             return state.concat(action.data);
         case "UPDATE_BLOG":
             return state.map(item => item.id === action.data.id ? action.data : item ) 
+        case "DELETE_BLOG":
+            return state.filter(item => item.id !== action.data)
         default:
             return state;
     }
@@ -39,6 +41,17 @@ export const updateBlog = newBlog => {
 
         dispatch({
             type: "UPDATE_BLOG",
+            data
+        })
+    }
+}
+
+export const deleteBlog = data => {
+    return async dispatch => {
+        await removeBlog(data);
+
+        dispatch({
+            type: "DELETE_BLOG",
             data
         })
     }

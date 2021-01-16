@@ -3,14 +3,12 @@ import {useDispatch, useSelector} from "react-redux";
 import Blog from '../components/Blog'
 import Login from '../components/Login'
 import Create from '../components/Create'
-import { setToken, removeBlog } from '../services/blogs'
+import { setToken } from '../services/blogs'
 import { login } from '../services/login'
 import Notification from '../components/Notification'
 import Toggable from '../components/Toggable'
 import { setNotification } from "./reducers/notification";
-import { setBlogs } from "./reducers/blogs";
-import { createBlog as createBlogReducer } from "./reducers/blogs";
-import { updateBlog } from "./reducers/blogs";
+import { createBlog as createBlogReducer, updateBlog, setBlogs, deleteBlog } from "./reducers/blogs";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -70,8 +68,7 @@ const App = () => {
   const handleDelete = async blog => {
     if(window.confirm(`Are you sure you want to delete ${blog.title} by ${blog.author}`)){
       try{
-        await removeBlog(blog.id)
-        dispatch(setBlogs(blogs.filter(element => element.id !== blog.id)))
+        deleteBlog(blog.id)
         dispatch(setNotification({message: `Deleted ${blog.title} by ${blog.author}`, notificationType: 'notification'}))
       } catch(err){
         dispatch(setNotification({message : err.message, notificationType: 'error'}))
