@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react'
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Blog from '../components/Blog'
 import Login from '../components/Login'
 import Create from '../components/Create'
-import { getAll, setToken, create, update, removeBlog } from '../services/blogs'
+import { setToken, removeBlog } from '../services/blogs'
 import { login } from '../services/login'
 import Notification from '../components/Notification'
 import Toggable from '../components/Toggable'
-import {setNotification} from "./reducers/notification";
+import { setNotification } from "./reducers/notification";
+import { setBlogs } from "./reducers/blogs";
+import { createBlog as createBlogReducer } from "./reducers/blogs";
+import { updateBlog } from "./reducers/blogs";
 
 const App = () => {
   const dispatch = useDispatch();
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector(state => state.blogs);
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [blogFormVisibility, setBlogFormVisibility] = useState(false)
 
   useEffect(() => {
-    getAll().then(blogs =>
-      setBlogs(blogs.sort((a, b) => b.likes - a.likes))
-    )
-  }, [])
+    dispatch(setBlogs())
+    }, [dispatch])
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem('loggedInUser')
@@ -51,10 +52,9 @@ const App = () => {
     setUser(null)
   }
 
-  const createBlog = async Blog => {
-    const newBlog = await create(Blog)
+  const createBlog = async newBlog => {
+    dispatch(createBlogReducer(newBlog))
     setBlogFormVisibility(false)
-    setBlogs(blogs.concat(newBlog))
     dispatch(setNotification({message:`A new blog ${newBlog.title} by ${newBlog.author} added`, notificationType: 'notification'}))
   }
 
@@ -63,9 +63,7 @@ const App = () => {
     const index = blogsCopy.findIndex(element => element.id === id)
     const newBlog = blogsCopy[index]
     newBlog.likes++
-    const updatedBlog = await update(newBlog)
-    blogsCopy[index] = updatedBlog
-    setBlogs(blogsCopy.sort((a, b) => b.likes - a.likes))
+    dispatch(updateBlog(newBlog))
     dispatch(setNotification({message:`You liked a blog ${newBlog.title}`, notificationType: 'notification'}))
   }
 
@@ -73,7 +71,7 @@ const App = () => {
     if(window.confirm(`Are you sure you want to delete ${blog.title} by ${blog.author}`)){
       try{
         await removeBlog(blog.id)
-        setBlogs(blogs.filter(element => element.id !== blog.id))
+        dispatch(setBlogs(blogs.filter(element => element.id !== blog.id)))
         dispatch(setNotification({message: `Deleted ${blog.title} by ${blog.author}`, notificationType: 'notification'}))
       } catch(err){
         dispatch(setNotification({message : err.message, notificationType: 'error'}))
