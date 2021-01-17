@@ -21,11 +21,10 @@ describe('create test', () => {
     const dataObj = {
       author: author.value,
       title: title.value,
-      url: url.value
+      url: url.value,
     }
     const functionCalls = createBlog.mock.calls[0][0]
     expect(dataObj).toEqual(functionCalls)
     await act(() => promise)
   })
-
 })

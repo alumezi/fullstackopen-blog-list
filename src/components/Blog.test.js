@@ -3,7 +3,6 @@ import { render, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import Blog from './Blog'
 
-
 describe('blog test', () => {
   let component
   let addLikeFunction
@@ -16,12 +15,19 @@ describe('blog test', () => {
       author: 'author',
       likes: 1111,
       url: '/url',
-      user: { id: '1231' }
+      user: { id: '1231' },
     }
     addLikeFunction = jest.fn()
     removeBlogFunction = jest.fn()
 
-    component = render(<Blog blog={testBlog} addLike={addLikeFunction} removeBlog={removeBlogFunction} userID="1231" />)
+    component = render(
+      <Blog
+        blog={testBlog}
+        addLike={addLikeFunction}
+        removeBlog={removeBlogFunction}
+        userID="1231"
+      />
+    )
   })
 
   test('renders the title & author but not details', () => {
@@ -48,5 +54,4 @@ describe('blog test', () => {
     fireEvent.click(likeButton)
     expect(addLikeFunction.mock.calls.length).toBe(2)
   })
-
 })

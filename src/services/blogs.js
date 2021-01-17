@@ -4,7 +4,7 @@ const tokenType = 'bearer '
 
 const getAll = async (token) => {
   const config = {
-    headers: { Authorization: tokenType + token }
+    headers: { Authorization: tokenType + token },
   }
 
   const response = await axios.get(baseUrl, config)
@@ -13,7 +13,7 @@ const getAll = async (token) => {
 
 const create = async (blog, token) => {
   const config = {
-    headers: { Authorization: tokenType + token }
+    headers: { Authorization: tokenType + token },
   }
 
   const response = await axios.post(baseUrl, blog, config)
@@ -22,7 +22,7 @@ const create = async (blog, token) => {
 
 const update = async (blog, token) => {
   const config = {
-    headers: { Authorization: tokenType + token }
+    headers: { Authorization: tokenType + token },
   }
 
   const response = await axios.put(`${baseUrl}/${blog.id}`, blog, config)
@@ -31,7 +31,7 @@ const update = async (blog, token) => {
 
 const removeBlog = async (id, token) => {
   const config = {
-    headers: { Authorization: tokenType + token }
+    headers: { Authorization: tokenType + token },
   }
 
   const response = await axios.delete(`${baseUrl}/${id}`, config)
