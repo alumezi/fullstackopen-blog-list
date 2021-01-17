@@ -16,8 +16,9 @@ export const blogs = (state = [], action) => {
 }
 
 export const setBlogs = () => {
-    return async dispatch => {
-        const data = await getAll();
+    return async (dispatch, getState) => {
+        const token = getState().userData.user.token;
+        const data = await getAll(token);
         dispatch({
             type: "SET_BLOGS",
             data
@@ -26,8 +27,9 @@ export const setBlogs = () => {
 }
 
 export const createBlog = blog => {
-    return async dispatch => {
-        const data = await create(blog);
+    return async (dispatch, getState) => {
+        const token = getState().userData.user.token;
+        const data = await create(blog, token);
         dispatch({
             type: "SET_BLOG",
             data
@@ -36,8 +38,9 @@ export const createBlog = blog => {
 }
 
 export const updateBlog = newBlog => {
-    return async dispatch => {
-        const data = await update(newBlog);
+    return async (dispatch, getState) => {
+        const token = getState().userData.user.token;
+        const data = await update(newBlog, token);
 
         dispatch({
             type: "UPDATE_BLOG",
@@ -47,8 +50,9 @@ export const updateBlog = newBlog => {
 }
 
 export const deleteBlog = data => {
-    return async dispatch => {
-        await removeBlog(data);
+    return async (dispatch, getState) => {
+        const token = getState().userData.user.token;
+        await removeBlog(data, token);
 
         dispatch({
             type: "DELETE_BLOG",

@@ -3,51 +3,36 @@ import {useDispatch, useSelector} from "react-redux";
 import Blog from '../components/Blog'
 import Login from '../components/Login'
 import Create from '../components/Create'
-import { setToken } from '../services/blogs'
-import { login } from '../services/login'
 import Notification from '../components/Notification'
 import Toggable from '../components/Toggable'
 import { setNotification } from "./reducers/notification";
 import { createBlog as createBlogReducer, updateBlog, setBlogs, deleteBlog } from "./reducers/blogs";
+import { setUser, removeUser } from "./reducers/user";
 
 const App = () => {
-  const dispatch = useDispatch();
-  const blogs = useSelector(state => state.blogs);
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const dispatch = useDispatch()
+  const blogs = useSelector(state => state.blogs)
+  const { user } = useSelector(state => state.userData)
   const [blogFormVisibility, setBlogFormVisibility] = useState(false)
-
-  useEffect(() => {
-    dispatch(setBlogs())
-    }, [dispatch])
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem('loggedInUser')
     if (loggedInUser) {
       const user = JSON.parse(loggedInUser)
-      setUser(user)
-      setToken(user.token)
+      dispatch(setUser(user))
     }
-  }, [])
+  }, [dispatch])
 
-  const handleLogin = async event => {
-    event.preventDefault()
-    try {
-      const user = await login(username, password)
-      window.localStorage.setItem('loggedInUser', JSON.stringify(user))
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch(error){
-      dispatch(setNotification({message: error.message, notificationType: 'error'}))
+  useEffect(() => {
+    if(user.id){
+      dispatch(setBlogs())
     }
-  }
+  }, [dispatch, user])
 
   const handleLogout = event => {
     event.preventDefault()
     window.localStorage.removeItem('loggedInUser')
-    setUser(null)
+    dispatch(removeUser())
   }
 
   const createBlog = async newBlog => {
@@ -68,7 +53,7 @@ const App = () => {
   const handleDelete = async blog => {
     if(window.confirm(`Are you sure you want to delete ${blog.title} by ${blog.author}`)){
       try{
-        deleteBlog(blog.id)
+        dispatch(deleteBlog(blog.id))
         dispatch(setNotification({message: `Deleted ${blog.title} by ${blog.author}`, notificationType: 'notification'}))
       } catch(err){
         dispatch(setNotification({message : err.message, notificationType: 'error'}))
@@ -76,10 +61,10 @@ const App = () => {
     }
   }
 
-  if (user === null) {
+  if (!user.id) {
     return <div>
       <Notification />
-      <Login handleLogin={handleLogin} username={username} password={password} setUsername={setUsername} setPassword={setPassword} />
+      <Login />
     </div>
   }
 
