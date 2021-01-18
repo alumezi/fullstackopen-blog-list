@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Blog from '../components/Blog'
 import Login from '../components/Login'
 import Create from '../components/Create'
+import Users from '../components/Users'
 import Notification from '../components/Notification'
 import Toggable from '../components/Toggable'
 import { setNotification } from './reducers/notification'
@@ -13,6 +14,7 @@ import {
   deleteBlog,
 } from './reducers/blogs'
 import { setUser, removeUser } from './reducers/user'
+import { getUsers } from './reducers/users'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -41,7 +43,8 @@ const App = () => {
   }
 
   const createBlog = async (newBlog) => {
-    dispatch(createBlogReducer(newBlog))
+    await dispatch(createBlogReducer(newBlog))
+    dispatch(getUsers())
     setBlogFormVisibility(false)
     dispatch(
       setNotification({
@@ -72,7 +75,8 @@ const App = () => {
       )
     ) {
       try {
-        dispatch(deleteBlog(blog.id))
+        await dispatch(deleteBlog(blog.id))
+        dispatch(getUsers())
         dispatch(
           setNotification({
             message: `Deleted ${blog.title} by ${blog.author}`,
@@ -123,6 +127,7 @@ const App = () => {
           userID={user.id}
         />
       ))}
+      <Users />
     </div>
   )
 }
