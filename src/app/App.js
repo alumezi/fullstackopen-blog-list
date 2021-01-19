@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Blog from '../components/Blog'
 import Login from '../components/Login'
 import Create from '../components/Create'
 import Users from '../components/Users'
+import User from '../components/User'
 import Notification from '../components/Notification'
 import Toggable from '../components/Toggable'
 import { setNotification } from './reducers/notification'
@@ -33,6 +35,7 @@ const App = () => {
   useEffect(() => {
     if (user.id) {
       dispatch(setBlogs())
+      dispatch(getUsers())
     }
   }, [dispatch, user])
 
@@ -104,7 +107,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <Router>
       <h2>blogs</h2>
       <Notification />
       <div>
@@ -127,8 +130,16 @@ const App = () => {
           userID={user.id}
         />
       ))}
-      <Users />
-    </div>
+
+      <Switch>
+        <Route path="/users" exact>
+          <Users />
+        </Route>
+        <Route path="/users/:id">
+          <User />
+        </Route>
+      </Switch>
+    </Router>
   )
 }
 
