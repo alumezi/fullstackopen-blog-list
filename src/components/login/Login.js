@@ -1,13 +1,13 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { login } from '../services/login'
+import { login } from '../../services/login'
 import {
   setUserName,
   setPassword,
   setUser,
   removeLoginData,
-} from '../app/reducers/user'
-import { setNotification } from '../app/reducers/notification'
+} from '../../app/reducers/user'
+import { setNotification } from '../../app/reducers/notification'
 
 const Login = () => {
   const dispatch = useDispatch()

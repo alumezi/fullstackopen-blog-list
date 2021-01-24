@@ -1,9 +1,9 @@
 import React from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { updateBlog, deleteBlog } from '../app/reducers/blogs'
-import { setNotification } from '../app/reducers/notification'
-import { getUsers } from '../app/reducers/users'
+import { updateBlog, deleteBlog } from '../../app/reducers/blogs'
+import { setNotification } from '../../app/reducers/notification'
+import { getUsers } from '../../app/reducers/users'
 
 const BlogDetails = ({ userID, blogs }) => {
   const dispatch = useDispatch()
