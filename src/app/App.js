@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import Blog from '../components/blog/Blog'
-import BlogDetails from '../components/blogDetails/BlogDetails'
-import Login from '../components/login/Login'
-import Create from '../components/create/Create'
-import Users from '../components/users/Users'
-import User from '../components/user/User'
-import Notification from '../components/notification/Notification'
-import Toggable from '../components/toggable/Toggable'
+import Blog from '../components/blog'
+import BlogDetails from '../components/blogDetails'
+import Login from '../components/login'
+import Create from '../components/create'
+import Users from '../components/users'
+import User from '../components/user'
+import Navigation from '../components/navigation'
+import Notification from '../components/notification'
+import Toggable from '../components/toggable'
 import { setNotification } from './reducers/notification'
 import { createBlog as createBlogReducer, setBlogs } from './reducers/blogs'
-import { setUser, removeUser } from './reducers/user'
+import { setUser } from './reducers/user'
 import { getUsers } from './reducers/users'
 
 const App = () => {
@@ -34,12 +35,6 @@ const App = () => {
       dispatch(getUsers())
     }
   }, [dispatch, user])
-
-  const handleLogout = (event) => {
-    event.preventDefault()
-    window.localStorage.removeItem('loggedInUser')
-    dispatch(removeUser())
-  }
 
   const createBlog = async (newBlog) => {
     await dispatch(createBlogReducer(newBlog))
@@ -66,10 +61,7 @@ const App = () => {
     <Router>
       <h2>blogs</h2>
       <Notification />
-      <div>
-        <span>{user.name} logged in</span>
-        <button onClick={(event) => handleLogout(event)}>Logout</button>
-      </div>
+      <Navigation name={user.name} />
       <Toggable
         buttonLabel="new note"
         visible={blogFormVisibility}
