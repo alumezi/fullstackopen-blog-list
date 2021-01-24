@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import Blog from '../components/Blog'
+import BlogDetails from '../components/BlogDetails'
 import Login from '../components/Login'
 import Create from '../components/Create'
 import Users from '../components/Users'
@@ -9,12 +10,7 @@ import User from '../components/User'
 import Notification from '../components/Notification'
 import Toggable from '../components/Toggable'
 import { setNotification } from './reducers/notification'
-import {
-  createBlog as createBlogReducer,
-  updateBlog,
-  setBlogs,
-  deleteBlog,
-} from './reducers/blogs'
+import { createBlog as createBlogReducer, setBlogs } from './reducers/blogs'
 import { setUser, removeUser } from './reducers/user'
 import { getUsers } from './reducers/users'
 
@@ -57,46 +53,6 @@ const App = () => {
     )
   }
 
-  const handleLike = async (id) => {
-    const blogsCopy = [...blogs]
-    const index = blogsCopy.findIndex((element) => element.id === id)
-    const newBlog = blogsCopy[index]
-    newBlog.likes++
-    dispatch(updateBlog(newBlog))
-    dispatch(
-      setNotification({
-        message: `You liked a blog ${newBlog.title}`,
-        notificationType: 'notification',
-      })
-    )
-  }
-
-  const handleDelete = async (blog) => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete ${blog.title} by ${blog.author}`
-      )
-    ) {
-      try {
-        await dispatch(deleteBlog(blog.id))
-        dispatch(getUsers())
-        dispatch(
-          setNotification({
-            message: `Deleted ${blog.title} by ${blog.author}`,
-            notificationType: 'notification',
-          })
-        )
-      } catch (err) {
-        dispatch(
-          setNotification({
-            message: err.message,
-            notificationType: 'error',
-          })
-        )
-      }
-    }
-  }
-
   if (!user.id) {
     return (
       <div>
@@ -121,17 +77,15 @@ const App = () => {
       >
         <Create createBlog={createBlog} />
       </Toggable>
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          addLike={handleLike}
-          removeBlog={handleDelete}
-          userID={user.id}
-        />
-      ))}
-
       <Switch>
+        <Route path="/blogs" exact>
+          {blogs.map((blog) => (
+            <Blog key={blog.id} blog={blog} />
+          ))}
+        </Route>
+        <Route path="/blogs/:id">
+          <BlogDetails blogs={blogs} userID={user.id} />
+        </Route>
         <Route path="/users" exact>
           <Users />
         </Route>
