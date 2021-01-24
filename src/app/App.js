@@ -70,7 +70,7 @@ const App = () => {
         <Create createBlog={createBlog} />
       </Toggable>
       <Switch>
-        <Route path="/blogs" exact>
+        <Route path={['/', '/blogs']} exact>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
