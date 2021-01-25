@@ -29,6 +29,19 @@ const update = async (blog, token) => {
   return response.data
 }
 
+const addComment = async (blog, token) => {
+  const config = {
+    headers: { Authorization: tokenType + token },
+  }
+
+  const response = await axios.put(
+    `${baseUrl}/${blog.id}/comments`,
+    blog,
+    config
+  )
+  return response.data
+}
+
 const removeBlog = async (id, token) => {
   const config = {
     headers: { Authorization: tokenType + token },
@@ -38,4 +51,4 @@ const removeBlog = async (id, token) => {
   return response.data
 }
 
-export { getAll, create, update, removeBlog }
+export { getAll, create, update, removeBlog, addComment }

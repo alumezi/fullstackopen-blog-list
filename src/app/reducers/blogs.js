@@ -1,4 +1,10 @@
-import { create, getAll, update, removeBlog } from '../../services/blogs'
+import {
+  create,
+  getAll,
+  update,
+  removeBlog,
+  addComment,
+} from '../../services/blogs'
 
 export const blogs = (state = [], action) => {
   switch (action.type) {
@@ -43,6 +49,19 @@ export const updateBlog = (newBlog) => {
   return async (dispatch, getState) => {
     const token = getState().userData.user.token
     const data = await update(newBlog, token)
+
+    dispatch({
+      type: 'UPDATE_BLOG',
+      data,
+    })
+  }
+}
+
+export const addBlogComment = (comment, id) => {
+  return async (dispatch, getState) => {
+    console.log(id)
+    const token = getState().userData.user.token
+    const data = await addComment({ comment, id }, token)
 
     dispatch({
       type: 'UPDATE_BLOG',

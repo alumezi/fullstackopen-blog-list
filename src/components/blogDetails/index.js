@@ -1,7 +1,11 @@
 import React from 'react'
 import { useParams, useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { updateBlog, deleteBlog } from '../../app/reducers/blogs'
+import {
+  updateBlog,
+  deleteBlog,
+  addBlogComment,
+} from '../../app/reducers/blogs'
 import { setNotification } from '../../app/reducers/notification'
 import { getUsers } from '../../app/reducers/users'
 
@@ -59,6 +63,23 @@ const BlogDetails = ({ userID, blogs }) => {
     }
   }
 
+  const handleCommentForm = async (event) => {
+    try {
+      event.preventDefault()
+      event.stopPropagation()
+      console.log(event.target.comment.value)
+      dispatch(addBlogComment(event.target.comment.value, blog.id))
+      event.target.comment.value = ''
+    } catch (err) {
+      dispatch(
+        setNotification({
+          message: err.message,
+          notificationType: 'error',
+        })
+      )
+    }
+  }
+
   return (
     <>
       <h1>{blog.title}</h1>
@@ -72,6 +93,10 @@ const BlogDetails = ({ userID, blogs }) => {
         Remove
       </button>
       {blog.comments.length && <h3>Comments</h3>}
+      <form onSubmit={handleCommentForm}>
+        <input type="text" name="comment" />
+        <button type="submit">Add comment</button>
+      </form>
       <ul>
         {blog.comments.map((item, iterator) => (
           <li key={iterator}>{item}</li>
