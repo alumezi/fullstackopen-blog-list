@@ -75,10 +75,9 @@ const App = () => {
             <Blog key={blog.id} blog={blog} />
           ))}
         </Route>
-        <Route
-          path="/blogs/:id"
-          component={<BlogDetails blogs={blogs} userID={user.id} />}
-        />
+        <Route path="/blogs/:id">
+          <BlogDetails blogs={blogs} userID={user.id} />
+        </Route>
         <Route path="/users" exact component={Users} />
         <Route path="/users/:id" component={User} />
       </Switch>
