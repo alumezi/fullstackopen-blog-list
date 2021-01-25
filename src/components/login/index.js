@@ -8,6 +8,14 @@ import {
   removeLoginData,
 } from '../../app/reducers/user'
 import { setNotification } from '../../app/reducers/notification'
+import {
+  Form,
+  FormInput,
+  FormGroup,
+  Card,
+  CardBody,
+  Button,
+} from 'shards-react'
 
 const Login = () => {
   const dispatch = useDispatch()
@@ -28,28 +36,48 @@ const Login = () => {
   }
 
   return (
-    <form onSubmit={handleLogin}>
-      <h2>log in to the application</h2>
-      <div>
-        <label htmlFor="username">username</label>
-        <input
-          type="text"
-          id="username"
-          value={username}
-          onChange={(event) => dispatch(setUserName(event.target.value))}
-        />
-      </div>
-      <div>
-        <label htmlFor="password">password</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(event) => dispatch(setPassword(event.target.value))}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+      }}
+    >
+      <Card
+        style={{
+          maxWidth: '500px',
+          width: '100%',
+        }}
+      >
+        <CardBody>
+          <Form onSubmit={handleLogin}>
+            <h2>Welcome to the Blog</h2>
+            <FormGroup>
+              <label htmlFor="username">username</label>
+              <FormInput
+                type="text"
+                id="username"
+                value={username}
+                onChange={(event) => dispatch(setUserName(event.target.value))}
+              />
+            </FormGroup>
+            <FormGroup>
+              <label htmlFor="password">password</label>
+              <FormInput
+                type="password"
+                id="password"
+                value={password}
+                onChange={(event) => dispatch(setPassword(event.target.value))}
+              />
+            </FormGroup>
+            <Button theme="primary" type="submit" style={{ float: 'right' }}>
+              Login
+            </Button>
+          </Form>
+        </CardBody>
+      </Card>
+    </div>
   )
 }
 
