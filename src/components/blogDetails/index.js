@@ -71,6 +71,12 @@ const BlogDetails = ({ userID, blogs }) => {
       <button style={deleteButtonStyle} onClick={handleDelete}>
         Remove
       </button>
+      {blog.comments.length && <h3>Comments</h3>}
+      <ul>
+        {blog.comments.map((item, iterator) => (
+          <li key={iterator}>{item}</li>
+        ))}
+      </ul>
     </>
   )
 }
